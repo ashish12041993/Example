@@ -3,24 +3,24 @@ on:
   pull_request: {}
   push:
     branches:
-    - main
-    - master
-    paths:
-    - .github/workflows/semgrep.yml
+      - main
+      - master
   schedule:
-  # random HH:MM to avoid a load spike on GitHub Actions at 00:00
-  - cron: 30 17 * * *
+    - cron: "31 9 * * *" # daily scan
+
 name: Semgrep
+
 jobs:
   semgrep:
-    name: semgrep/ci
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    env:
-      SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
     container:
       image: semgrep/semgrep
     steps:
-    - uses: actions/checkout@v4
-    - run: semgrep ci
+      - uses: actions/checkout@v4
+
+      - name: Run Semgrep with PR comments
+        env:
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+        run: semgrep ci
+
+
